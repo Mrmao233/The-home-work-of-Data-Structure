@@ -1,0 +1,152 @@
+//三元组稀疏矩阵相加
+#include <stdio.h>
+#include <stdlib.h>
+#define maxsize 12500
+typedef struct tri_matrix
+{
+    int i,j;//行下标和列下标
+    int e;//元素值
+}triple_matrix;
+typedef struct
+{
+    triple_matrix data[maxsize];
+    int mu;//矩阵的行数
+    int nu;//矩阵的列数
+    int tu;//矩阵的非零元个数
+}TSMatrix;
+void Matrix_pri(TSMatrix C)//矩阵输出函数
+{
+    int i;
+    for(i=0;i<C.tu;i++)
+    {
+        printf("第%d个元素行数：%d\n",i+1,(C.data[i].i)+1);
+        printf("第%d个元素列数：%d\n",i+1,(C.data[i].j)+1);
+        printf("第%d个元素值：%d\n",i+1,C.data[i].e);
+    }
+    printf("\n");
+
+}
+void TSMatrix_add(TSMatrix A,TSMatrix B,TSMatrix *C)//矩阵相加函数
+{
+    int i=0,j=0,count=0;
+    while(i<A.tu&&j<B.tu)
+    {
+        if(A.data[i].i<B.data[j].i)
+        {
+            C->data[count].i=A.data[i].i;
+            C->data[count].j=A.data[i].j;
+            C->data[count].e=A.data[i].e;
+            i++;count++;
+        }
+        else if(A.data[i].i==B.data[j].i)
+        {
+            if(A.data[i].j<B.data[j].j)
+            {
+            C->data[count].i=A.data[i].i;
+            C->data[count].j=A.data[i].j;
+            C->data[count].e=A.data[i].e;
+            i++;count++;
+            }
+            else if(A.data[i].j==B.data[j].j)
+            {
+            C->data[count].i=A.data[i].i;
+            C->data[count].j=A.data[i].j;
+            C->data[count].e=A.data[i].e+B.data[j].e;
+            //printf("这是调试%d\n",C->data[count].e);
+            i++;j++;count++;
+            //printf("这是调试count=%d\n",count);
+            }
+            else
+            {
+            C->data[count].i=B.data[i].i;
+            C->data[count].j=B.data[i].j;
+            C->data[count].e=B.data[i].e;
+            j++;count++;
+            }
+        }
+        else
+        {
+            C->data[count].i=B.data[i].i;
+            C->data[count].j=B.data[i].j;
+            C->data[count].e=B.data[i].e;
+            j++;count++;
+        }
+    }
+    while(i<A.tu)
+    {
+            C->data[count].i=A.data[i].i;
+            C->data[count].j=A.data[i].j;
+            C->data[count].e=A.data[i].e;
+            i++;count++;
+    }
+    while(j<B.tu)
+    {
+            C->data[count].i=B.data[i].i;
+            C->data[count].j=B.data[i].j;
+            C->data[count].e=B.data[i].e;
+            j++;count++;
+    }
+C->tu=count;
+}
+int main()
+{
+    int mu,nu,i,count_A,count_B,row,col;
+    TSMatrix A;
+    TSMatrix B;
+    TSMatrix C;
+    printf("A矩阵的行数为：\n");
+    scanf("%d",&mu);
+    A.mu=mu-1;
+    printf("A矩阵的列数为：\n");
+    scanf("%d",&nu);
+    A.nu=nu-1;
+    B=A;
+    C=A;
+    //A
+    printf("输入A矩阵非零元元素个数\n");
+    scanf("%d",&count_A);
+    A.tu=count_A;
+    if(count_A>mu*nu)
+    {
+        printf("越界");
+        return 0;
+    }
+    for(i=0;i<count_A;i++)
+    {
+        printf("输入第%d个元素行数\n",i+1);
+        scanf("%d",&row);
+        A.data[i].i=row-1;
+        printf("输入第%d个元素列数\n",i+1);
+        scanf("%d",&col);
+        A.data[i].j=col-1;
+        printf("输入第%d个元素的元素值\n",i+1);
+        scanf("%d",&A.data[i].e);
+    }
+    printf("\n\n\n");
+    //B
+    //B
+    //B
+    printf("输入B矩阵非零元元素个数\n");
+    scanf("%d",&count_B);
+    B.tu=count_B;
+    if(count_B>mu*nu)
+    {
+        printf("越界");
+        return 0;
+    }
+    for(i=0;i<count_B;i++)
+    {
+        printf("输入第%d个元素行数\n",i+1);
+        scanf("%d",&row);
+        B.data[i].i=row-1;
+        printf("输入第%d个元素列数\n",i+1);
+        scanf("%d",&col);
+        B.data[i].j=col-1;
+        printf("输入第%d个元素的元素值\n",i+1);
+        scanf("%d",&B.data[i].e);
+    }
+    TSMatrix_add(A,B,&C);
+    Matrix_pri(C);
+
+    return 0;
+}
